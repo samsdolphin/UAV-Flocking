@@ -1,6 +1,6 @@
 <launch>
 	<arg name="uavname" default="px3" />
-        <arg name="odom_topic" value="/pos_vel_mocap/odom_TA" />
+        <arg name="odom_topic" value="/vins_estimator/imu_propagate" />
 
 	<node pkg="n1ctrl" type="n1ctrl_node" name="n1ctrl" output="screen">
 		<remap from="~joy" to="/djiros/rc" />
@@ -12,7 +12,7 @@
 		<remap from="~traj_start_trigger" to="/traj_start_trigger" />
 		<remap from="~ctrl" to="/djiros/ctrl" />
 
-                <rosparam command="load" file="$(find machine_defined)/config/ctrl_param_$(arg uavname).yaml" />
+        <rosparam command="load" file="$(find machine_defined)/config/ctrl_param_$(arg uavname).yaml" />
         <param name="work_mode" value="real-time" />
         <param name="js_ctrl_mode" value="feedback" />
 	</node>
