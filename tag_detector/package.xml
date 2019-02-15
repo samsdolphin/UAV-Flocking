@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<package>
+  <name>tag_detector</name>
+  <version>0.1.0</version>
+  <description>
+    Tag detector based on Aruco 3.0.10.
+  </description>
+  <maintainer email="liuxiyuan95@gmail.com">Xiyuan</maintainer>
+  <license>BSD</license>
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>roscpp</build_depend>
+  <run_depend>roscpp</run_depend>
+</package>
