@@ -1,8 +1,8 @@
 # 2995 + 680(batt) = 3675
-mass        : 1.1
-gra         : 9.81
+mass        : 1.36
+gra         : 9.78
 hov_percent : 0.20
-full_thrust : 60
+full_thrust : 50
 ctrl_rate   : 50.0
 js_ctrl_lock_velo: 0.3
 
