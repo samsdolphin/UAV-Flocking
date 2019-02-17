@@ -3,7 +3,9 @@
 
 #include <eigen3/Eigen/Dense>
 #include <vector>
-class TrajectoryGeneratorWaypoint {
+
+class TrajectoryGeneratorWaypoint
+{
 private:
 		double _qp_cost;
 		Eigen::MatrixXd _Q;
@@ -13,13 +15,13 @@ public:
 
         ~TrajectoryGeneratorWaypoint();
 
-        Eigen::MatrixXd PolyQPGeneration(
-            const Eigen::MatrixXd &Path,
-            const Eigen::MatrixXd &Vel,
-            const Eigen::MatrixXd &Acc,
-            const Eigen::VectorXd &Time);
+        Eigen::MatrixXd PolyQPGeneration(const Eigen::MatrixXd &Path,
+                                         const Eigen::MatrixXd &Vel,
+                                         const Eigen::MatrixXd &Acc,
+                                         const Eigen::VectorXd &Time);
 
         double getObjective();
+        int factorial(int n);
 };
 
 #endif
