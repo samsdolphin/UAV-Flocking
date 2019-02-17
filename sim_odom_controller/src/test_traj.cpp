@@ -33,7 +33,7 @@ int cnt = -1;
 int point_pass = 0;
 double plan_time_start = 0;
 int traj_id_send = 0;
-double traj_start_time = -1.0;
+double traj_start_time = -1.0; 
 bool start_new_plan = 0;
 bool is_init = 0;
 bool is_triggered = 0;
@@ -296,7 +296,7 @@ void body_pose_callback(const nav_msgs::Odometry &msg)
         }
     }
 
-    pub_cmd(msg);   
+    pub_cmd(msg);
 }
 
 
