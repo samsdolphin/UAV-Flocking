@@ -18,7 +18,7 @@ ros::Subscriber trigger_sub;
 visualization_msgs::Marker selected_marker_;
 
 #define uav_height 1.3
-#define num_p 3
+#define num_p 10
 
 #define pt1x 0.5
 #define pt1y 0.5
@@ -29,6 +29,27 @@ visualization_msgs::Marker selected_marker_;
 #define pt3x 1.5
 #define pt3y 0.5
 
+#define pt4x 4
+#define pt4y -1
+
+#define pt5x 5
+#define pt5y 0
+
+#define pt6x 4
+#define pt6y 1
+
+#define pt7x 3
+#define pt7y -1
+
+#define pt8x 2
+#define pt8y 1
+
+#define pt9x 1
+#define pt9y -1
+
+#define pt10x 0
+#define pt10y 0
+
 int cnt = -1;
 int point_pass = 0;
 double plan_time_start = 0;
@@ -38,7 +59,7 @@ bool start_new_plan = 0;
 bool is_init = 0;
 bool is_triggered = 0;
 
-Matrix<double, 3, 2> pts;
+Matrix<double, num_p, 2> pts;
 MatrixXd uav_coef;
 VectorXd uav_t;
 
@@ -55,9 +76,9 @@ void traj_viz()
 
     bool first = true;
 
-    for(double dT=ros::Time::now().toSec(); dT<T(T.rows()-1); dT+=0.1) 
+    for (double dT=ros::Time::now().toSec(); dT<T(T.rows()-1); dT+=0.1) 
     {
-        if(first)
+        if (first)
         {
             parent.x = coef(0,0);
             parent.y = coef(0,6);
@@ -69,7 +90,7 @@ void traj_viz()
         {
             if (dT<T(i))
             {
-                double tt = i > 0 ? dT - T(i - 1) : dT - plan_time_start;
+                double tt = i > 0 ? dT - T(i-1) : dT - plan_time_start;
 
                 //std::cout<<"T(i-1): "<<T(i-1)<<'\n';
 
@@ -115,18 +136,18 @@ void traj_viz()
 
 void pub_cmd(const nav_msgs::Odometry& msg)
 {
-    if(start_new_plan)
+    if (start_new_plan)
     {
         traj_start_time = msg.header.stamp.toSec();
         start_new_plan = false;
     }
 
-    if(traj_start_time<0 && is_init)
+    if (traj_start_time<0 && is_init)
         return;
 
-    if(is_init)
+    if (is_init)
     {
-        if(is_triggered)
+        if (is_triggered)
         {
             double dT = msg.header.stamp.toSec();
             double des_x = 0;
@@ -137,9 +158,9 @@ void pub_cmd(const nav_msgs::Odometry& msg)
             double des_ay = 0;
             bool traj_ok = false;
 
-            for(int i=0; i<uav_t.size(); i++)
+            for (int i=0; i<uav_t.size(); i++)
             {
-                if(dT < uav_t(i))
+                if (dT < uav_t(i))
                 {
                     double tt = i ? dT - uav_t(i-1) : dT - traj_start_time;
                     Matrix<double, 1, 6> t_p;
@@ -171,7 +192,7 @@ void pub_cmd(const nav_msgs::Odometry& msg)
             position_cmd.header.stamp = msg.header.stamp;
             position_cmd.header.frame_id = "world";
 
-            if(traj_ok)
+            if (traj_ok)
             {
                 position_cmd.position.x = des_x;
                 position_cmd.position.y = des_y;
@@ -237,12 +258,12 @@ void body_pose_callback(const nav_msgs::Odometry &msg)
     //std::cout<<"cnt:"<<cnt<<"\n";
     is_init = true;
 
-    if(cnt < 0) // Not triggered
+    if (cnt < 0) // Not triggered
         return;
 
-    if(point_pass<3)
+    if (point_pass<num_p)
     {
-        if(cnt > 0)
+        if (cnt > 0)
         {
             cnt++;
             cnt = cnt%1200; // plan once every 1200/400 seconds
@@ -251,18 +272,18 @@ void body_pose_callback(const nav_msgs::Odometry &msg)
         {
             ros::Time time0 = ros::Time::now();
             cnt++;
-            //if(point_pass>2) point_pass=2;
+            //if (point_pass>2) point_pass=2;
 
             plan_time_start = msg.header.stamp.toSec();
             TrajectoryGeneratorWaypoint T;
-            Eigen::MatrixXd Path = Eigen::MatrixXd::Zero(4-point_pass, 3);
+            Eigen::MatrixXd Path = Eigen::MatrixXd::Zero(num_p+1-point_pass, 3);
             Eigen::MatrixXd Vel = Eigen::MatrixXd::Zero(2, 3);
             Eigen::MatrixXd Acc = Eigen::MatrixXd::Zero(2, 3);
-            Eigen::VectorXd Time = Eigen::VectorXd::Zero(3-point_pass);
+            Eigen::VectorXd Time = Eigen::VectorXd::Zero(num_p-point_pass);
 
             Path(0,0) = msg.pose.pose.position.x;
             Path(0,1) = msg.pose.pose.position.y;
-            Path.block(1,0,3-point_pass,2) = pts.block(point_pass,0,3-point_pass,2);
+            Path.block(1,0,num_p-point_pass,2) = pts.block(point_pass,0,num_p-point_pass,2);
 
             Vel(0,0) = msg.twist.twist.linear.x;
             Vel(0,1) = msg.twist.twist.linear.y;
@@ -273,7 +294,7 @@ void body_pose_callback(const nav_msgs::Odometry &msg)
             Acc(0,1) = msg.twist.twist.angular.y;
 
 
-            for(int i=0; i<3-point_pass; i++)
+            for (int i=0; i<num_p-point_pass; i++)
                 Time(i) = 3; 
 
             uav_coef = T.PolyQPGeneration(Path,Vel,Acc,Time);
@@ -282,7 +303,7 @@ void body_pose_callback(const nav_msgs::Odometry &msg)
 
             uav_t.resize(uav_coef.rows());
             uav_t(0) = Time(0)+plan_time_start;
-            for(int i=1; i<3-point_pass; i++)
+            for (int i=1; i<num_p-point_pass; i++)
                 uav_t(i) = 3+uav_t(i-1);
 
             ros::Time time2 = ros::Time::now();
@@ -303,7 +324,7 @@ void body_pose_callback(const nav_msgs::Odometry &msg)
 void traj_trigger_callback(const geometry_msgs::PoseStamped::ConstPtr& trigger_msg)
 {
     cnt = 0;
-    if(is_init)
+    if (is_init)
     {
         std::cout << "[#INFO] get traj trigger info." << std::endl;
         traj_id_send = traj_id_send + 1;//trigger_msg->header.seq + 1;
@@ -323,7 +344,7 @@ int main(int argc, char *argv[])
     position_cmd_pub= nh.advertise<quadrotor_msgs::PositionCommand>("/position_cmd",1);
     uav_odom_pub = nh.advertise<nav_msgs::Odometry>("/uav_target",1);
 
-    pts<< pt1x,pt1y,pt2x,pt2y,pt3x,pt3y;//,pt4x,pt4y,pt5x,pt5y,pt6x,pt6y,pt7x,pt7y,pt8x,pt8y,pt9x,pt9y,pt10x,pt10y;
+    pts<< pt1x,pt1y,pt2x,pt2y,pt3x,pt3y,pt4x,pt4y,pt5x,pt5y,pt6x,pt6y,pt7x,pt7y,pt8x,pt8y,pt9x,pt9y,pt10x,pt10y;
 
     ros::spin();
     return 0;
