@@ -50,8 +50,8 @@ void process(const vector<cv::Point3f> &pts_3, const vector<cv::Point2f> &pts_2,
 
 cv::Point3f getPositionFromIndex(int idx, int nth)
 {
-	double p_x = 0.0;
-	double p_y = 0.0;
+    double p_x = 0.0;
+    double p_y = 0.0;
     return cv::Point3f(p_x + (nth == 1 || nth == 2) * MarkerSize, p_y + (nth == 0 || nth == 1) * MarkerSize, 0.0);
 }
 
@@ -101,9 +101,9 @@ int main(int argc, char **argv)
     ros::Subscriber img_sub = nh.subscribe("image_raw", 100, img_callback);
     pub_odom = nh.advertise<nav_msgs::Odometry>("tag_odom", 10);
 
-    MarkerMapConfig.readFromFile("/home/nvidia/catkin_ws/src/tag_detector/config/outconfig.yml");
-	K = (Mat_<double>(3,3)<<932.247529, 0.000000, 635.466246, 0.000000, 932.448344, 447.605581, 0.000000, 0.000000, 1.000000);
-	D = (Mat_<double>(1,5)<<-0.391250, 0.120670, -0.001217, -0.000112, 0.000000);
+    MarkerMapConfig.readFromFile("/home/nuc/catkin_ws/src/tag_detector/config/outconfig.yml");
+    K = (Mat_<double>(3,3)<<932.247529, 0.000000, 635.466246, 0.000000, 932.448344, 447.605581, 0.000000, 0.000000, 1.000000);
+    D = (Mat_<double>(1,5)<<-0.391250, 0.120670, -0.001217, -0.000112, 0.000000);
 
     ros::spin();
     destroyWindow("view");
