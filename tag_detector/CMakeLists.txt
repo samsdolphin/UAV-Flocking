@@ -1,9 +1,14 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(tag_detector)
 
-set(CMAKE_CXX_FLAGS "-std=c++11")
+set(CMAKE_BUILD_TYPE "Release")
+set(CMAKE_CXX_FLAGS "-std=c++11 -march=native -DEIGEN_DONT_PARALLELIZE")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Wall")
 
-find_package(catkin REQUIRED COMPONENTS roscpp std_msgs cv_bridge)
+find_package(catkin REQUIRED COMPONENTS
+  roscpp
+  std_msgs
+  cv_bridge)
 
 find_package(OpenCV REQUIRED)
 

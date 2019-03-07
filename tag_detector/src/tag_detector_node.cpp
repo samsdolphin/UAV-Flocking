@@ -20,7 +20,6 @@ using namespace Eigen;
 MarkerDetector MDetector;
 MarkerMap MarkerMapConfig;
 float MarkerSize = 0.12;
-//float MarkerWithMargin = 0.318;
 ros::Publisher pub_odom;
 cv::Mat K, D;
 
@@ -60,10 +59,12 @@ void img_callback(const sensor_msgs::ImageConstPtr &img_msg)
     try
     {
         Mat InImage = cv_bridge::toCvCopy(img_msg, sensor_msgs::image_encodings::BGR8)->image;
+        Mat UndisImage;
+        undistort(InImage, UndisImage, K, D);
         vector<cv::Point3f> pts_3;
         vector<cv::Point2f> pts_2;
 
-        for(auto m:MDetector.detect(InImage))
+        for(auto m:MDetector.detect(UndisImage))
         {
             int idx = MarkerMapConfig.getIndexOfMarkerId(m.id);
 
@@ -73,16 +74,16 @@ void img_callback(const sensor_msgs::ImageConstPtr &img_msg)
                 pts_3.push_back(getPositionFromIndex(idx, i));
                 pts_2.push_back(m[i]);
                 sprintf(str, "%d", i);
-                cv::putText(InImage, str, m[i], CV_FONT_HERSHEY_COMPLEX, 0.6, cv::Scalar(0,0,255,255));
+                cv::putText(UndisImage, str, m[i], CV_FONT_HERSHEY_COMPLEX, 0.6, cv::Scalar(0,0,255,255));
             }
-            m.draw(InImage);
+            m.draw(UndisImage);
         }
 
         if (pts_3.size() >= 4)
             process(pts_3, pts_2, img_msg->header.stamp);
 
-        imshow("view", InImage);
-        waitKey(10);
+        imshow("view", UndisImage);
+        waitKey(5);
     }
     catch(cv_bridge::Exception& ex)
     {
@@ -101,10 +102,15 @@ int main(int argc, char **argv)
     ros::Subscriber img_sub = nh.subscribe("image_raw", 100, img_callback);
     pub_odom = nh.advertise<nav_msgs::Odometry>("tag_odom", 10);
 
-    MarkerMapConfig.readFromFile("/home/nuc/catkin_ws/src/tag_detector/config/outconfig.yml");
-    K = (Mat_<double>(3,3)<<932.247529, 0.000000, 635.466246, 0.000000, 932.448344, 447.605581, 0.000000, 0.000000, 1.000000);
-    D = (Mat_<double>(1,5)<<-0.391250, 0.120670, -0.001217, -0.000112, 0.000000);
+    string cam_cal;
+    nh.getParam("cam_cal_file", cam_cal);
+    cv::FileStorage param_reader(cam_cal, cv::FileStorage::READ);
+    
+    param_reader["camera_matrix"] >> K;
+    param_reader["distortion_coefficients"] >> D;
 
+    MarkerMapConfig.readFromFile("/home/nuc/catkin_ws/src/tag_detector/config/outconfig.yml");
+    
     ros::spin();
     destroyWindow("view");
 }
