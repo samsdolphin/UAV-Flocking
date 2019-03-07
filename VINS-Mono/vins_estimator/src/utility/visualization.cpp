@@ -42,7 +42,7 @@ void registerPub(ros::NodeHandle &n)
     keyframebasevisual.setLineWidth(0.01);
 }
 
-void pubLatestOdometry(const Eigen::Vector3d &P, const Eigen::Quaterniond &Q, const Eigen::Vector3d &V, const std_msgs::Header &header)
+void pubLatestOdometry(const Eigen::Vector3d &P, const Eigen::Quaterniond &Q, const Eigen::Vector3d &V, const Eigen::Vector3d &A, const std_msgs::Header &header)
 {
     Eigen::Quaterniond quadrotor_Q = Q ;
 
@@ -59,6 +59,9 @@ void pubLatestOdometry(const Eigen::Vector3d &P, const Eigen::Quaterniond &Q, co
     odometry.twist.twist.linear.x = V.x();
     odometry.twist.twist.linear.y = V.y();
     odometry.twist.twist.linear.z = V.z();
+    odometry.twist.twist.angular.x = A.x();
+    odometry.twist.twist.angular.y = A.y();
+    odometry.twist.twist.angular.z = A.z();
     pub_latest_odometry.publish(odometry);
 }
 

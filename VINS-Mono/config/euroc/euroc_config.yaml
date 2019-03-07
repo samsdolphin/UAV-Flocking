@@ -2,8 +2,8 @@
 
 #common parameters
 imu_topic: "/djiros/imu"
-image_topic: "/mv_29901979/image_raw"
-output_path: "/home/nvidia/output/"
+image_topic: "/mv_29901978/image_raw"
+output_path: "/home/nuc/output/"
 
 #camera calibration 
 model_type: PINHOLE
@@ -11,15 +11,15 @@ camera_name: camera
 image_width: 1280
 image_height: 960
 distortion_parameters:
-   k1: -3.8984187175970508e-01
-   k2: 1.2905875684447907e-01
-   p1: -6.5750702294254868e-04
-   p2: -8.2089560998264575e-04
+   k1: -4.1528748360069973e-01
+   k2: 1.6515536415975832e-01
+   p1: -8.8169537846114355e-04
+   p2: 5.6720017784784054e-05
 projection_parameters:
-   fx: 9.0446139696051603e+02
-   fy: 9.0303177010861134e+02
-   cx: 6.4216599564246644e+02
-   cy: 4.4500681003865975e+02
+   fx: 1.0877062169127300e+03
+   fy: 1.0875437064022542e+03
+   cx: 6.4814315683575285e+02
+   cy: 4.5329900867187001e+02
 
 # Extrinsic parameter between IMU and Camera.
 estimate_extrinsic: 1   # 0  Have an accurate extrinsic parameters. We will trust the following imu^R_cam, imu^T_cam, don't change it.
@@ -31,17 +31,17 @@ extrinsicRotation: !!opencv-matrix
    rows: 3
    cols: 3
    dt: d
-   data: [ 1.4410161461715365e-03, -1.8950174530077250e-02,
-       9.9981939086904381e-01, -9.9978888408353916e-01,
-       -2.0520245502010814e-02, 1.0520396990397354e-03,
-       2.0496603022394484e-02, -9.9960982908823814e-01,
-       -1.8975743851705973e-02 ]
+   data: [ 1.0224464322169835e-02, -2.3155166907067593e-02,
+       9.9967959795868144e-01, -9.9986731139016105e-01,
+       -1.2915485077764632e-02, 9.9272281437133292e-03,
+       1.2681480305388737e-02, -9.9964845245251710e-01,
+       -2.3284148396541582e-02 ]
 extrinsicTranslation: !!opencv-matrix
    rows: 3
    cols: 1
    dt: d
-   data: [ 2.1313268026464077e-02, -6.4978956349973693e-02,
-       8.6623694112766287e-03 ]
+   data: [ 4.1236803449423251e-02, -3.7903517960111682e-02,
+       -1.9457194279676696e-02 ]
 
 #feature traker paprameters
 max_cnt: 100            # max feature number in feature tracking

@@ -35,6 +35,9 @@ Eigen::Vector3d tmp_Ba;
 Eigen::Vector3d tmp_Bg;
 Eigen::Vector3d acc_0;
 Eigen::Vector3d gyr_0;
+
+Eigen::Vector3d acc_out;
+
 bool init_feature = 0;
 bool init_imu = 1;
 double last_imu_t = 0;
@@ -75,6 +78,7 @@ void predict(const sensor_msgs::ImuConstPtr &imu_msg)
 
     acc_0 = linear_acceleration;
     gyr_0 = angular_velocity;
+    acc_out = un_acc_0;
 }
 
 void update()
@@ -157,7 +161,7 @@ void imu_callback(const sensor_msgs::ImuConstPtr &imu_msg)
         std_msgs::Header header = imu_msg->header;
         header.frame_id = "world";
         if (estimator.solver_flag == Estimator::SolverFlag::NON_LINEAR)
-            pubLatestOdometry(tmp_P, tmp_Q, tmp_V, header);
+            pubLatestOdometry(tmp_P, tmp_Q, tmp_V, acc_out, header);
     }
 }
 
@@ -192,7 +196,6 @@ void restart_callback(const std_msgs::BoolConstPtr &restart_msg)
         estimator.setParameter();
         m_estimator.unlock();
         current_time = -1;
-        last_imu_t = 0;
     }
     return;
 }
