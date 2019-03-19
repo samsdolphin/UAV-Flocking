@@ -1,8 +1,8 @@
 <launch>
     <!-- Common Interface -->
-    <arg name="device" default = "29901979"/>
-    <arg name="rate" default="30"/>
-
+    <arg name="device" default = "29901978"/>
+    <arg name="rate" default="20"/>
+	
     <!-- Camera Settings -->
     <arg name="serial" default="$(arg device)"/>
     <arg name="camera_name" default="mv_$(arg serial)"/>
@@ -11,16 +11,16 @@
     <arg name="calib_url" default="file://$(find bluefox2)/cfg/ost.yaml"/>
     <arg name="fps" default="$(arg rate)"/>
 
-    <arg name="idpf" default="2"/> <!--Image Destination Pixel Format-->
-    <arg name="aec" default="false"/> <!--Auto Exposure Control-->
-    <arg name="expose_us" default="30000"/>
-    <arg name="agc" default="false"/> <!--Auto Gain Control-->
+    <arg name="idpf" default="2"/>
+    <arg name="aec" default="false"/>
+    <arg name="expose_us" default="45000"/>
+    <arg name="agc" default="false"/>
     <arg name="gain_db" default="0.0"/>
-    <arg name="cbm" default="0"/> <!--Camera Beginning Mode-->
-    <arg name="ctm" default="0"/> <!--Camera Test Mode-->
-    <arg name="dcfm" default="1"/> <!--Dark Current Filter Mode-->
+    <arg name="cbm" default="0"/>
+    <arg name="ctm" default="0"/>
+    <arg name="dcfm" default="1"/>
     <arg name="hdr" default="false"/>
-    <arg name="wbp" default="6"/> <!--White Balance Parameter-->
+    <arg name="wbp" default="6"/>
     <arg name="request" default="0"/>
     <arg name="mm" default="0"/>
     <arg name="jpeg_quality" default="80"/>
