@@ -18,4 +18,4 @@ install(DIRECTORY launch config
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
 # Check the validity of the supplied launch files.
-roslaunch_add_file_check(launch)
+#roslaunch_add_file_check(launch)
