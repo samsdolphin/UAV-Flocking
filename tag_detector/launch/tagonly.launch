@@ -1,8 +1,0 @@
-<launch>
-
-    <node pkg="tag_detector" type="tag_detector" name="tag_detector" output="screen">
-		<param name= "cam_cal_file" type="string" value="$(find tag_detector)/config/mv_29901978.yaml"/>
-        <remap from="~image_raw" to="/mv_29901978/image_raw"/>
-    </node>
-
-</launch>
