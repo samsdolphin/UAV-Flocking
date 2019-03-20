@@ -1,0 +1,16 @@
+<launch>
+    <!-- MARKER DETECTOR -->
+    <node pkg="marker_detector" type="marker_detector" name="marker_detector" output="screen">
+        <param name= "cam_cal_file" type="string" value="$(find marker_detector)/config/left.yaml"/>
+        <remap from="~image_raw" to="/camera/infra1/image_rect_raw"/>
+        <remap from="~camera_pose" to="/vins_estimator/camera_pose"/>
+    </node>
+
+
+    <!-- UAV CONTROLLER -->
+    <node pkg="uav_controller" type="line" name="line" output="screen">
+        <remap from="~marker_pose" to="/marker_detector/marker_pose"/>
+        <remap from="~body_pose" to="/vins_estimator/imu_propagate"/>
+        <remap from="~trigger" to="/traj_start_trigger"/>
+    </node>
+</launch>
