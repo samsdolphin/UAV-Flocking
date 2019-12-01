@@ -488,54 +488,8 @@ void estimate_F(const nav_msgs::Odometry &bmsg)
 	for (int i=0; i<nx; i++)
 		_coef(i) = d[i];
 	f_viz(_coef);
-	/*
-	if(tar_obs.back().second(2)-tar_obs.front().second(2)>0)
-		cout<<"right"<<endl;
-	else
-		cout<<"left"<<endl;
-	for(int i=0; i<10; i++)
-	{
-		cout<<"v: "<<(_VA*_coef)(3*i+1)<<"\t";
-		cout<<"a: "<<(_VA*_coef)(3*(i+_NUM_P)+1)<<endl;
-	}
-	*/
 }
-/*
-void est_callback(const geometry_msgs::PoseStampedConstPtr &cmsg, const nav_msgs::OdometryConstPtr &bmsg)
-{
-	//TODO add a filter
-	//cout<<"est_callback"<<endl;
-	Vector3d p_cam(cmsg->pose.position.x, cmsg->pose.position.y, cmsg->pose.position.z);
-	Vector3d p_body(bmsg->pose.pose.position.x, bmsg->pose.pose.position.y, bmsg->pose.pose.position.z);
-	double cur_t = cmsg->header.stamp.toSec();
 
-	if (p_cnt >= _NUM_P-1)
-	{
-		tar_obs.push_back(make_pair(cur_t, p_cam));
-		//cout<<"time lap: "<<tar_obs.back().first-tar_obs.front().first<<endl;
-		
-		if (tar_obs.back().first-tar_obs.front().first<1)
-		{
-			ros::Time t0 = ros::Time::now();
-			estimate_T(tar_obs);
-			estimate_F(*bmsg);
-			ros::Time t1 = ros::Time::now();
-			cout<<"time consumed in ooqp: "<<(t1-t0).toSec()<<endl;
-		}
-
-		tar_obs.pop_front();
-		tar_obs.pop_front();
-		p_cnt = _NUM_P-2;
-	}
-	else
-	{
-		tar_obs.push_back(make_pair(cur_t, p_cam));
-		p_cnt++;
-	}
-
-	is_init = true;
-}
-*/
 void body_pose_callback(const nav_msgs::Odometry &msg)
 {
 	Vector3d cur_body_pose(msg.pose.pose.position.x, msg.pose.pose.position.y, msg.pose.pose.position.z);
@@ -682,7 +636,7 @@ void body_pose_callback(const nav_msgs::Odometry &msg)
 			break;
 
 			case 2: // TRAJ_STATE
-			if (msg.header.stamp.toSec()-uav_t<=1)
+			if (msg.header.stamp.toSec()-uav_t<=0.5*t_lm)
 			{
 				//cout<<"CASE 1 LINE"<<endl;
 				double dT = msg.header.stamp.toSec()-uav_t;
@@ -844,11 +798,11 @@ int main(int argc, char *argv[])
     plan_traj_pub= nh.advertise<visualization_msgs::Marker>("f_viz", 1);
     tar_pt_pub = nh.advertise<visualization_msgs::Marker>("pt_viz", 1);
     position_cmd_pub = nh.advertise<quadrotor_msgs::PositionCommand>("/position_cmd",1);
-
+/*
     tar_traj_pub = nh.advertise<visualization_msgs::Marker>("traj_viz", 1);
     plan_traj_pub = nh.advertise<visualization_msgs::Marker>("f_viz", 1);
     tar_pt_pub = nh.advertise<visualization_msgs::Marker>("pt_viz", 1);
-/*
+
 	message_filters::Subscriber<geometry_msgs::PoseStamped> marker_pose_sub(nh, "marker_pose", 30);
 	message_filters::Subscriber<nav_msgs::Odometry> body_pose_sub(nh, "body_pose", 100);
 

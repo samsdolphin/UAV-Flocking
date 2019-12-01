@@ -1,0 +1,9 @@
+<launch>
+    <node pkg="rosbag" type="play" name="player" output="screen" args="$(find uav_controller)/bag/outdoor1.bag"/>
+
+    <!-- UAV CONTROLLER -->
+    <node pkg="uav_controller" type="test_uav" name="test_uav" output="screen">
+        <remap from="~marker_pose" to="/marker_detector/marker_pose"/>
+        <remap from="~body_pose" to="/vins_estimator/imu_propagate"/>
+    </node>
+</launch>
